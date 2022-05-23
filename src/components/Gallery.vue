@@ -1,22 +1,7 @@
 <template>
 <div>
-    <div id="sort">
-        <label for="select-character-family">Family</label>
-			<select class="select" v-model="characterFamily" id="select-character-family" >
-                <option value="">All</option>
-                <option value="Targaryen">House Targaryen</option>
-                <option value="Tarly">House Tarly</option>
-                <option value="Stark">House Stark</option>
-                <option value="Baratheon">House Baratheon</option>
-                <option value="Lannister">House Lannister</option>
-			</select>
-        <label for="select-character-sort">Sort by : </label>
-            <select class="select" v-model="gotSortType" id="select-character-sort" >
-                <option value="AZlastName">Last name from A to Z</option>
-                <option value="ZAlastName">Last name from Z to A</option>
-                <option value="AZfirstName">First name from A to Z</option>
-                <option value="ZAfirstName">First name from Z to A</option>
-			</select>
+    <div>
+        <GalleryOptions :search.sync="search" :gotSortType.sync="gotSortType"/>
     </div>
     <div class="gallery">
         <CharacterCard class="myCard" v-for="gotData in gotOrganizedData" v-bind:key="gotData.id" :imageUrl="gotData.imageUrl" :fullName="gotData.fullName" :title="gotData.title" :family="gotData.family" :lastName="gotData.lastName" :firstName="gotData.firstName"/>
@@ -26,31 +11,34 @@
 
 <script>
 import CharacterCard from '@/components/CharacterCard.vue'
+import GalleryOptions from '@/components/GalleryOptions.vue'
 import getGotData from '@/services/gotAPI.js'
 getGotData()
 
 export default {
-    name : 'App',
+    name : 'Gallery',
   components: {
       CharacterCard,
+      GalleryOptions,
   },
+  watch: {
+		search: function(newSearch) {
+			localStorage.setItem("search", newSearch)
+		},
+		gotSortType: function(newGotSortType) {
+			localStorage.setItem("gotSortType", newGotSortType)
+		}
+	},
   computed: {
     gotOrganizedData : function() {
-      const field = ["AZlastName", "ZAlastName"].includes(this.gotSortType) ? "lastName" : "firstName"
-      const reversed = ["ZAlastName", "ZAfirstName"].includes(this.gotSortType)
-      const filterFunc = (a) => a.lastName.toLowerCase().includes(this.search.toLowerCase())
-      const comparator = (a,b) => a[field].localeCompare(b[field])
-      let data = this.gotDatas.filter(filterFunc)
-      data = data.sort(comparator)
-      if (reversed) data = data.reverse()
-      return data
+      return this.sortCharacters(this.searchCharacters(this.gotDatas))
     }
   },
   data() {
       return {
       gotDatas: [],
-      search: "",
-      gotSortType: "AZlastName"
+      search: localStorage.getItem("search") || "",
+      gotSortType: localStorage.getItem("gotSortType") || "AZName"
     }
   },
   created: function(){
@@ -61,8 +49,24 @@ export default {
           this.gotDatas = await getGotData();
           console.log(this.gotDatas);
       },
+
+      sortCharacters: function(data){
+        const field = ["AZlastName", "ZAlastName"].includes(this.gotSortType) ? "lastName" : "firstName"
+        const reversed = ["ZAlastName", "ZAfirstName"].includes(this.gotSortType)
+        const comparator = (a,b) => a[field].localeCompare(b[field])
+        data = data.sort(comparator)
+        if (reversed) data = data.reverse()
+        return data
+      },
+
+      searchCharacters: function(data){
+          return data.filter(gotData => gotData.fullName.toLowerCase().includes(this.search.toLowerCase()))
+      },
   }
 }
+
+//localStorage.setItem("search", this.search)
+//localStorage.setItem("gotSortType", this.gotSortType)
 </script>
 
 <style>
@@ -72,5 +76,30 @@ export default {
     justify-content: center;
     align-items: center;
     flex-wrap: wrap;
+}
+
+.select {
+  padding: 0.3%;
+  border-radius: 8px;
+  border-color: black;
+  cursor: pointer;
+}
+
+label {
+  margin-left: 3%;
+  margin-right: 1%;
+}
+
+#sort {
+  margin-bottom: 2%;
+}
+
+.search {
+width: 60%;
+margin: 2%;
+padding: 0.5%;
+border-radius: 10px;
+border-color: black;
+font-size: 17px;
 }
 </style>
