@@ -1,8 +1,6 @@
 <template>
   <div id="app">
-    <header>
-      <h1> GOT characters</h1>
-    </header>
+    <Header/>
 
     <main>
       <div id="composants">
@@ -10,20 +8,22 @@
     </div>
     </main>
 
-    <footer>
-      <p>Realised by Elise Gondange during year 2 of IMAC</p>
-    </footer>
+    <Footer/>
   </div>
 </template>
 
 <script>
 import Gallery from '@/components/Gallery.vue'
+import Header from '@/components/Header.vue'
+import Footer from '@/components/Footer.vue'
 
 
 export default {
   name: 'App',
   components: {
     Gallery,
+    Header,
+    Footer,
   },
 }
 </script>
