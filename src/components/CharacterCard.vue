@@ -8,12 +8,12 @@
       <div class="card__face card__face--back">
         <div class="card__content">
           <div class="card__header">
-            <img class="pp" id="characterImg" v-bind:src="imageUrl"> 
+            <img class="character-img" id="characterImg" v-bind:src="imageUrl"> 
             <h2>{{fullName}}</h2>
           </div>
           <div class="card__body">
-              <h4>{{title}}</h4>
-              <h3>{{family}}</h3>
+              <h4>Title : {{title}}</h4>
+              <h3>Family : {{family}}</h3>
           </div>
         </div>
       </div>
@@ -53,8 +53,8 @@ export default {
 
 <style>
 :root {
-  --primary : #FFCE00;
-  --secondary : #FE4880;
+  --primary : #748DA1;
+  --secondary : #1a2328;
   --dark : #212121;
   --light : #F3F3F3;
 }
@@ -132,7 +132,7 @@ export default {
   background-image: linear-gradient(to bottom left, var(--primary) 10%, var(--secondary) 115%);
 }
 
-.pp {
+.character-img {
   display: block;
   width: 128px;
   height: 128px;
@@ -147,6 +147,10 @@ export default {
   color: #FFF;
   text-align: center;
 } 
+
+.card__body {
+  color: #1B1C21;
+}
 
 #characterImg {
   max-height: 250px;
